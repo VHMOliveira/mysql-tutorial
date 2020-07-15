@@ -1,0 +1,428 @@
+CREATE DATABASE	db_curso_web;
+DROP DATABASE db_curso_web;
+
+/////////////////
+Sintaxe de criação de tabelas
+nome_da_coluna tipo,
+
+not null = indica que o campo não pode ser vazio
+null = indica que o campo pode ser omitido
+DEFAULT = atribui uma informação que será padrão caso ela não seja preenchida 
+
+para o tipo float tem que informar (quantidade de dígitos do número(contando a fração)
+, quantidade de dígitos do decimal) 
+
+Ex: float (5,2) = 345,23
+
+CREATE TABLE tb_cursos(
+	id_curso int not null,
+    imagem_curso varchar(100) not null,
+    nome_curso char(50) not null,
+    resumo text null,
+    data_cadastro datetime not null,
+    ativo boolean DEFAULT true,
+    investimento float (8,2) default 0
+);
+
+DROP TABLE tb_cursos;
+
+////////////////////////////////////////
+
+diferença entre o tipo de dado varchar e char
+
+char:
+
+vantagem: mais rápido para pesquisas
+desvantagem: mau utilizado pode desperdiçar espaço de disco
+
+varchar:
+
+vantagem: ocupa o tamanho necessário no disco
+desvantagem: é mais lento, pois possui um metadata indicando o tamanho e a posição
+
+/////////////////////
+Renomear nome de tabelas do banco de dados
+
+RENAME TABLE `db_curso_web`.`tb_cursos` TO `db_curso_web`.`tb_cursos_teste`;
+
+RENAME TABLE tb_cursos_teste TO tb_cursos;
+
+/////////////////////////////////////////////
+
+manipulando tabelas
+
+add: adiciona coluna
+change: altera a coluna, permitindo a alteração do nome e propriedades
+drop: deleta a coluna
+
+ALTER TABLE tb_cursos ADD COLUMN carga_horaria VARCHAR(5) NOT NULL;
+
+ALTER TABLE tb_cursos CHANGE carga_horaria carga_hora INT(5) NULL;
+
+ALTER TABLE tb_cursos CHANGE carga_hora carga_horaria INT(5);
+
+ALTER TABLE tb_cursos DROP carga_horaria;
+
+ALTER TABLE tb_cursos ADD carga_horaria INT(5) NULL;
+
+/////////////////////////////////////////////////////////////////////
+
+Inserindo registros dentro de tabelas
+
+INSERT INTO tb_cursos(ativo, carga_horaria, data_cadastro, id_curso, imagem_curso, investimento, nome_curso, resumo) VALUES (1, 35, '2018-07-27 12:25:35', 2, 'curso_angular.jpg', 575.86, 'Web Completo com JS, TS e Angular', 'Aprenda a criar aplicações front-end incríveis com Javascript, TypeScript e Angular'); 
+
+INSERT INTO tb_cursos(ativo, carga_horaria, data_cadastro, id_curso, imagem_curso, investimento, nome_curso, resumo) VALUES (1, 15, '2018-07-27 00:00:00', 1, 'curso_node.jpg', 550.75, 'Curso Completo NodeJS e MongoDB', 'Cria aplicações back-end incriveis com a plataforma NodeJS e o banco de dados MongoDB'); 
+
+////////////////////////////////////////////////////////////////////
+
+Recuperar registros inseridos na tabelas
+
+SELECT id_curso, resumo, ativo, carga_horaria, data_cadastro, imagem_curso, investimento, nome_curso FROM tb_cursos;
+
+SELECT id_curso, resumo FROM tb_cursos;
+
+SELECT * FROM tb_cursos;
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+Filtros de registros
+
+para isso se usa a palavra reservada WHERE
+
+Exemplo:
+
+SELECT id_curso, nome_curso FROM tb_cursos WHERE investimento < 500.00
+SELECT id_curso, nome_curso FROM tb_cursos WHERE investimento < 500.00 AND carga_horario > 30
+
+Sintaxe:
+* seleciona todos os registros
+FROM seleciona a tabela
+
+Operadores de comparação
+
+= igual
+< menor que
+<= menor ou igual que
+> maior que
+>= maior ou igual que
+
+Operadores lógicos
+
+AND
+OR
+
+Exemplo 2:
+
+SELECT * FROM tb_alunos WHERE interesse = 'Jogos';
+
+SELECT * FROM `tb_alunos` WHERE idade < 25;
+
+SELECT * FROM `tb_alunos` WHERE idade <= 25;
+
+SELECT * FROM `tb_alunos` WHERE idade > 30;
+
+SELECT * FROM `tb_alunos` WHERE idade >= 35;
+
+Exemplo 3:
+
+SELECT * FROM `tb_alunos` WHERE interesse = 'Jogos' AND idade > 45;
+
+SELECT * FROM `tb_alunos` WHERE interesse = 'Jogos' AND idade > 45 AND estado = 'RN';
+
+SELECT * FROM `tb_alunos` WHERE interesse = 'Jogos' OR idade > 45;
+
+////////////////////////////////////////////////////////////////////
+
+Filtro BETWEEN
+Utilizado para filtrar registros entre valores do tipo number ou data
+
+Exemplo:
+
+SELECT * FROM `tb_alunos` WHERE idade BETWEEN 18 AND 25;
+SELECT * FROM `tb_alunos` WHERE data BETWEEN '2018-07-01' AND '2018-07-31';
+
+//////////////////////////////////////////////////////////////////////////////////
+
+Filto com operador IN
+
+Ele limita o filtro para atuar em uma lista de possibilidades, no exemplo a seguir ele filtro só
+os dados que são Jogos, Esporte e Música
+
+Exemplo:
+
+SELECT * FROM `tb_alunos` WHERE interesse = 'Jogos' OR interesse = 'Esporte' OR interesse = 'Música';
+
+SELECT * FROM `tb_alunos` WHERE interesse IN('Jogos', 'Esporte', 'Música');
+
+SELECT * FROM `tb_alunos` WHERE interesse NOT IN('Jogos', 'Esporte', 'Música');
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+Filtro com o operador LIKE
+
+permite realizar filtros com base em uma pesquisa de caracteres dentro de uma coluna textual
+
+Caracteres curingas:
+
+% Indica que pode haver a existência de qualquer conjunto de caracter no texto
+_ Indica que pode haver a existência de uma ou mais caracteres em uma posição especifica do texto
+
+Exemplo:
+
+SELECT * FROM `tb_alunos` WHERE nome = 'Evelyn';
+
+SELECT * FROM `tb_alunos` WHERE nome LIKE '%e'; (seleciona todos os registros onde o nome é finalizado com a letra "e")
+SELECT * FROM `tb_alunos` WHERE nome LIKE '%ne'; (seleciona todos os registros onde o nome é finalizado com a letra "ne")
+SELECT * FROM `tb_alunos` WHERE nome LIKE '%a%'; (seleciona todos os registros onde o nome possui a letra "a")
+SELECT * FROM `tb_alunos` WHERE nome LIKE 'C%'; (seleciona todos os registros onde o nome inicia com a letra "C")
+
+SELECT * FROM `tb_alunos` WHERE nome LIKE '_riel'; (seleciona todos os registros onde o nome possui um único caracter a esquerda de "riel")
+SELECT * FROM `tb_alunos` WHERE nome LIKE '_ru_'; (seleciona todos os registros onde o nome possui um único caracter a esquerda e a direita de "ru")
+
+SELECT * FROM `tb_alunos` WHERE nome LIKE 'I__'; (seleciona todos os registros onde o nome possui dois caracteres a direita de "I")
+
+/////////////////////////////////////////////////////////////////////
+
+Ordenando resultados
+
+ASC valores ascendentes que é por default
+DESC valores descendente
+
+sintaxe:
+ORDER BY coluna ASC/DESC, coluna ASC/DESC, coluna ASC/DESC, ....
+
+Exemplo:
+
+SELECT * FROM `tb_alunos` WHERE idade BETWEEN 18 AND 59 ORDER BY nome ASC;
+
+SELECT * FROM `tb_alunos` WHERE idade BETWEEN 18 AND 59 ORDER BY nome DESC;
+
+SELECT * FROM `tb_alunos` WHERE idade BETWEEN 18 AND 59 ORDER BY nome ASC, idade DESC, estado ASC;
+
+///////////////////////////////////////////////////////////////////////////
+
+Limitando a quantidade de registros apresentados ao usuário
+
+é um operador opcional e tem que ser utilizado sempre no final da query
+
+Operador:
+LIMIT = utilizado para limitar
+OFFSET = define o deslocamento, basicamente ele pula os registros inciais
+
+Exemplo:
+
+SELECT * FROM `tb_alunos` LIMIT 25;
+
+SELECT * FROM `tb_alunos` ORDER BY id_aluno DESC LIMIT 25;
+
+SELECT * FROM `tb_alunos` LIMIT 4 OFFSET 0;
+
+SELECT * FROM `tb_alunos` LIMIT 4 OFFSET 4;
+
+SELECT * FROM `tb_alunos` LIMIT 4 OFFSET 8; (aqui serão os registros de 9-12)
+
+///////////////////////////////////////////////////////////////////////////
+
+Funções de agregação:
+
+são inseridas no SELECT
+
+MIN : Retorna o menor valor de todos os registros com base em uma coluna
+MAX : Retorna o maior valor de todos os registros com base em uma coluna
+AVG : Retorna a média de todos os registros com base em uma coluna
+SUM: Retorna a soma de todos os registros com base em uma coluna
+COUNT: Retorna a quantidade de todos os registros com base em uma coluna
+
+Exemplo 1:
+
+SELECT MIN(investimento) FROM `tb_cursos`;
+
+SELECT MIN(investimento) FROM `tb_cursos` WHERE ativo = true;
+
+SELECT MAX(investimento) FROM `tb_cursos` WHERE ativo = true;
+
+SELECT AVG(investimento) FROM `tb_cursos` WHERE ativo = true;
+
+Exemplo 2:
+
+SELECT SUM(investimento) FROM `tb_cursos`;
+
+SELECT SUM(investimento) FROM `tb_cursos` WHERE ativo = true;
+
+SELECT COUNT(*) FROM `tb_cursos` WHERE ativo = true;
+
+SELECT COUNT(*) FROM `tb_cursos`;
+
+///////////////////////////////////////////////////////////////////////////
+
+Agrupando seleção de registro
+
+Sintaxe:
+
+GROUP BY: É muito utilizado com as funções de agregação, onde ele agrupa os registros
+        com base em uma ou mais colunas cujos valores sejam iguais
+
+Exemplo:
+
+SELECT * FROM `tb_alunos` GROUP BY interesse;
+
+SELECT *, count(*) FROM `tb_alunos` GROUP BY interesse;
+
+SELECT interesse, count(*) FROM `tb_alunos` GROUP BY interesse;
+
+
+SELECT interesse, count(*) AS total_por_interesse FROM `tb_alunos` GROUP BY interesse;
+
+SELECT * FROM `tb_alunos` GROUP BY estado;
+
+SELECT estado, COUNT(*) AS total_por_interesse FROM `tb_alunos` WHERE estado = 'ES';
+
+///////////////////////////////////////////////////////////////////////////
+
+Filtrando seleções agrupadas
+
+Utilizado depois de GROUP BY
+
+Sintaxe:
+HAVING filtro utilizado sobre o resultado de GROUP BY
+
+Exemplo:
+
+SELECT estado, COUNT(*) as total_de_registros FROM `tb_alunos` GROUP BY estado;
+
+SELECT estado, COUNT(*) as total_de_registros FROM `tb_alunos` GROUP BY estado HAVING total_de_registros >= 5;
+
+SELECT estado, COUNT(*) as total_de_registros FROM `tb_alunos` GROUP BY estado HAVING estado IN ('MG', 'SP');
+
+SELECT estado, COUNT(*) as total_de_registros FROM `tb_alunos` GROUP BY estado HAVING estado IN ('CE', 'SC') AND total_de_registros > 4;
+
+SELECT estado, COUNT(*) as total_de_registros FROM `tb_alunos` WHERE interesse != 'Esporte' GROUP BY estado HAVING total_de_registros > 3;
+
+///////////////////////////////////////////////////////////////////////////
+
+Atualizando registros
+
+sintaxe:
+
+UPDATE <tabela> SET <coluna> = <valor>, <coluna> = <valor>, <coluna> = <valor> WHERE <filtro(s)>
+
+Exemplo:
+
+UPDATE tb_alunos SET nome = 'João' WHERE id_aluno = 13;
+
+UPDATE tb_alunos SET interesse = 'Saúde' WHERE idade >=80;
+
+UPDATE tb_alunos SET nome = 'João' WHERE id_aluno = 18;
+
+UPDATE tb_alunos SET nome = 'José', idade = 25, email = 'jose@gmail.com' WHERE id_aluno = 18;
+
+SELECT * FROM `tb_alunos` WHERE idade BETWEEN 18 AND 25 AND estado = 'PA';
+
+///////////////////////////////////////////////////////////////////////////
+
+Deletando registros
+
+sintaxe:
+
+DELETE FROM <tabela> WHERE <filtro(s)>
+
+Exemplo:
+
+DELETE FROM tb_alunos WHERE id_aluno = 5;
+
+SELECT * FROM `tb_alunos` WHERE idade IN(10,18,22,28,34) AND interesse = 'Esporte';
+
+DELETE FROM `tb_alunos` WHERE idade IN(10,18,22,28,34) AND interesse = 'Esporte';
+
+///////////////////////////////////////////////////////////////////////////
+
+JOIN pela esquerda
+
+Relaciona todos os registros da tabela à esquerda + CASO EXISTA, todos os registros
+da tabela à direita. No caso se utiliza um pivô para relacionar as duas tabelas
+
+LEFT JOIN junta a tabela da esquerda com a direita, retornando a tabela esquerda e os da direita
+onde a condição é atendida.
+
+ON é o operador que define a regra de junção
+
+Exemplo:
+(retorna todos os registros de tb_clientes mais os de tb_pedidos onde o id é igual)
+SELECT * FROM tb_clientes LEFT JOIN tb_pedidos ON (tb_clientes.id_cliente = tb_pedidos.id_cliente); 
+
+(retorna todos os registros de tb_produtos mais os de tb_imagens onde o id é igual)
+SELECT * FROM tb_produtos LEFT JOIN tb_imagens ON (tb_produtos.id_produto = tb_imagens.id_produto);
+
+///////////////////////////////////////////////////////////////////////////
+
+JOIN pela direita
+
+Relaciona todos os registros da tabela à direita + CASO EXISTA, todos os registros
+da tabela à esquerda. No caso se utiliza um pivô para relacionar as duas tabelas
+
+RIGHT JOIN junta a tabela da esquerda com a direita, retornando a tabela direita e os da esquerda
+onde a condição é atendida.
+
+ON é o operador que define a regra de junção
+
+Exemplo:
+(retorna todos os registros de tb_pedidos mais os de tb_clientes onde o id é igual)
+SELECT * FROM tb_clientes RIGHT JOIN tb_pedidos ON (tb_clientes.id_cliente = tb_pedidos.id_cliente); 
+
+(retorna todos os registros de tb_imagens mais os de tb_produtos onde o id é igual)
+SELECT * FROM tb_produtos RIGHT JOIN tb_imagens ON (tb_produtos.id_produto = tb_imagens.id_produto);
+
+///////////////////////////////////////////////////////////////////////////
+
+JOIN pela direita
+
+Relaciona todos os registros da tabela à direita + CASO EXISTA, todos os registros
+da tabela à esquerda. No caso se utiliza um pivô para relacionar as duas tabelas
+
+RIGHT JOIN junta a tabela da esquerda com a direita, retornando a tabela direita e os da esquerda
+onde a condição é atendida.
+
+ON é o operador que define a regra de junção
+
+Exemplo:
+(retorna todos os registros de tb_pedidos mais os de tb_clientes onde o id é igual)
+SELECT * FROM tb_clientes RIGHT JOIN tb_pedidos ON (tb_clientes.id_cliente = tb_pedidos.id_cliente); 
+
+(retorna todos os registros de tb_imagens mais os de tb_produtos onde o id é igual)
+SELECT * FROM tb_produtos RIGHT JOIN tb_imagens ON (tb_produtos.id_produto = tb_imagens.id_produto);
+
+///////////////////////////////////////////////////////////////////////////
+
+JOIN pela interno
+
+INNER JOIN junta a tabela da esquerda com a direita, retornando os registros
+onde a condição é atendida.
+
+ON é o operador que define a regra de junção
+
+Exemplo:
+(retorna todos os registros de tb_pedidos e de tb_clientes onde o id é igual)
+SELECT * FROM tb_clientes INNER JOIN tb_pedidos ON (tb_clientes.id_cliente = tb_pedidos.id_cliente); 
+
+(retorna todos os registros de tb_imagens e de tb_produtos onde o id é igual)
+SELECT * FROM tb_produtos INNER JOIN tb_imagens ON (tb_produtos.id_produto = tb_imagens.id_produto);
+
+///////////////////////////////////////////////////////////////////////////
+
+Apelidando tabelas
+
+é um recurso para facilitar a manipulação da tabela, utilizado logo depois de nomear a tabela
+
+Operador:
+AS
+
+Exemplo:
+SELECT * FROM tb_produtos LEFT JOIN tb_descricoes_tecnicas ON (tb_produtos.id_produto = tb_descricoes_tecnicas.id_produto);
+
+SELECT * FROM tb_produtos AS p LEFT JOIN tb_descricoes_tecnicas AS dt ON (p.id_produto = dt.id_produto);
+
+SELECT p.id_produto, p.produto, p.valor, dt.descricao_tecnica FROM tb_produtos AS p LEFT JOIN tb_descricoes_tecnicas AS dt ON (p.id_produto = dt.id_produto);
+
+SELECT p.id_produto, p.produto, p.valor, dt.descricao_tecnica FROM tb_produtos AS p LEFT JOIN tb_descricoes_tecnicas AS dt ON (p.id_produto = dt.id_produto) WHERE p.valor >= 500;
+
+SELECT p.id_produto, p.produto, p.valor, dt.descricao_tecnica FROM tb_produtos AS p LEFT JOIN tb_descricoes_tecnicas AS dt ON (p.id_produto = dt.id_produto) WHERE p.valor >= 500 ORDER BY p.valor ASC;
